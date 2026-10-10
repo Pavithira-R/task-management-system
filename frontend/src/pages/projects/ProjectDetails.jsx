@@ -4,6 +4,7 @@ import DashboardLayout from '../../components/DashboardLayout';
 import projectService from '../../services/projectService';
 import { useAuth } from '../../context/AuthContext';
 import AttachmentManager from '../../components/attachments/AttachmentManager';
+import SubtaskProgress from '../../components/tasks/SubtaskProgress';
 import { useToast } from '../../utils/ToastContext';
 import ConfirmModal from '../../components/ConfirmModal';
 
@@ -285,6 +286,7 @@ export default function ProjectDetails() {
                       <td className="px-6 py-4">
                         <div className="font-bold text-indigo-950 text-[13.5px]">{task.title}</div>
                         <div className="text-gray-400 text-[12px] truncate max-w-xs">{task.description || 'No description.'}</div>
+                        <SubtaskProgress subtasks={task.subtasks} className="mt-1.5 max-w-[200px]" />
                       </td>
                       <td className="px-6 py-4">
                         <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full uppercase ${

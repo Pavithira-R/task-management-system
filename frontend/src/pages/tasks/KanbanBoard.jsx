@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../../components/DashboardLayout';
 import taskService from '../../services/taskService';
 import projectService from '../../services/projectService';
+import SubtaskProgress from '../../components/tasks/SubtaskProgress';
 
 const COLUMNS = [
   { 
@@ -399,6 +400,9 @@ export default function KanbanBoard() {
                                 {task.description}
                               </p>
                             )}
+
+                            {/* Checklist progress */}
+                            <SubtaskProgress subtasks={task.subtasks} className="mb-3" />
 
                             {/* Footer */}
                             <div className="flex items-center justify-between pt-2 border-t border-gray-50 dark:border-slate-700">

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { TaskController } from '../controllers/task.controller';
 import { CommentController } from '../controllers/comment.controller';
 import { AttachmentController } from '../controllers/attachment.controller';
+import { SubtaskController } from '../controllers/subtask.controller';
 import { uploadMiddleware } from '../middlewares/upload.middleware';
 import { authenticateUser } from '../middlewares/auth.middleware';
 import { checkRole } from '../middlewares/role.middleware';
@@ -46,6 +47,10 @@ router.patch('/:id/priority', checkRole([Role.PROJECT_MANAGER]) as any, TaskCont
 // ─── Task Comment Routes ───────────────────────────
 router.post('/:id/comments', checkRole([Role.PROJECT_MANAGER, Role.COLLABORATOR]) as any, CommentController.addComment);
 router.get('/:id/comments', checkRole([Role.ADMIN, Role.PROJECT_MANAGER, Role.COLLABORATOR]) as any, CommentController.getCommentsForTask);
+
+// ─── Task Checklist (Subtask) Routes ───────────────
+router.get('/:id/subtasks', checkRole([Role.ADMIN, Role.PROJECT_MANAGER, Role.COLLABORATOR]) as any, SubtaskController.getSubtasks);
+router.post('/:id/subtasks', checkRole([Role.PROJECT_MANAGER, Role.COLLABORATOR]) as any, SubtaskController.addSubtask);
 
 // ─── Task Attachment Routes ────────────────────────
 router.post('/:id/attachments', checkRole([Role.ADMIN, Role.PROJECT_MANAGER, Role.COLLABORATOR]) as any, uploadMiddleware.single('file'), AttachmentController.uploadAttachment);

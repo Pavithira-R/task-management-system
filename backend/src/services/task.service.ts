@@ -81,6 +81,9 @@ export class TaskService {
             },
           },
         },
+        subtasks: {
+          select: { id: true, isCompleted: true },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -322,6 +325,9 @@ export class TaskService {
             },
           },
           orderBy: { createdAt: 'desc' },
+        },
+        subtasks: {
+          orderBy: [{ position: 'asc' }, { id: 'asc' }],
         },
       },
     });
@@ -773,6 +779,9 @@ export class TaskService {
               select: { id: true, name: true },
             },
           },
+        },
+        subtasks: {
+          select: { id: true, isCompleted: true },
         },
       },
       orderBy: { createdAt: 'desc' },

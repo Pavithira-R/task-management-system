@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTasks } from '../../hooks/useTasks';
 import DeleteModal from '../../components/tasks/DeleteModal';
+import SubtaskProgress from '../../components/tasks/SubtaskProgress';
 import DashboardLayout from '../../components/DashboardLayout';
 import { format } from 'date-fns';
 
@@ -154,6 +155,7 @@ export default function TaskList() {
                           {task.description && (
                             <p className="text-xs text-gray-500 dark:text-slate-400 mt-1 truncate max-w-md">{task.description}</p>
                           )}
+                          <SubtaskProgress subtasks={task.subtasks} className="mt-2 max-w-[220px]" />
                         </td>
                         <td className="px-6 py-4">
                           <span className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 text-xs font-medium rounded-md">

@@ -11,6 +11,7 @@ A production-ready, secure, and feature-rich full-stack Task Management System d
 * **Project Management**: Create projects, assign owners, and manage project members.
 * **Task Management**: Create, update, filter, prioritize, and assign tasks to collaborators.
 * **Real-time Collaboration**: Project-wide instant messaging/chat and real-time live notifications powered by Socket.io.
+* **Task Checklists**: Break tasks into subtasks with a progress bar on the task page, task list and Kanban cards.
 * **Comments & Discussions**: Discuss task progress directly on tasks with support for comment editing/deletion.
 * **File Uploads (AWS S3 or local disk)**: Upload, rename, download, and delete task and project attachments securely. Uses S3 when configured, otherwise stores files locally with expiring signed download links.
 * **Administrative Audit Logs & Stats**: Access real-time system audit logs, user activation/deactivation controls, role delegation, and sign-up approval requests.
@@ -237,6 +238,14 @@ Access the Swagger interactive API docs at `http://localhost:5000/api-docs` (whe
 | `PUT` | `/api/comments/:id` | Edit an existing comment content | Comment Author / PM |
 | `PATCH` | `/api/comments/:id` | Partial edit comment content | Comment Author / PM |
 | `DELETE` | `/api/comments/:id` | Delete comment | Comment Author / PM |
+
+### 5b. Task Checklists (`/api/tasks/:id/subtasks` & `/api/subtasks`)
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| `GET` | `/api/tasks/:id/subtasks` | Get the checklist items of a task | Project Members / Admin |
+| `POST` | `/api/tasks/:id/subtasks` | Add a checklist item | Project PM / Assigned Collaborator |
+| `PATCH` | `/api/subtasks/:id` | Rename or tick/untick a checklist item (`title`, `isCompleted`) | Project PM / Assigned Collaborator |
+| `DELETE` | `/api/subtasks/:id` | Delete a checklist item | Project PM / Assigned Collaborator |
 
 ### 6. File Attachments (`/api/tasks` & `/api/projects` & `/api/attachments`)
 | Method | Endpoint | Description | Access |

@@ -5,6 +5,7 @@ import DashboardLayout from '../../components/DashboardLayout';
 import taskService from '../../services/taskService';
 import CommentSection from '../../components/comments/CommentSection';
 import AttachmentManager from '../../components/attachments/AttachmentManager';
+import SubtaskChecklist from '../../components/tasks/SubtaskChecklist';
 import { useToast } from '../../utils/ToastContext';
 
 export default function TaskDetails() {
@@ -16,9 +17,10 @@ export default function TaskDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchTaskDetails = async () => {
+  // silent: refresh data (e.g. the activity trail) without showing the full-page loader
+  const fetchTaskDetails = async ({ silent = false } = {}) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       setError(null);
       const res = await taskService.getTaskById(parseInt(id));
       // In taskService.getTaskById, response structure might be res.data or direct res
@@ -41,7 +43,7 @@ export default function TaskDetails() {
       await taskService.updateTaskStatus(task.id, newStatus);
       setTask(prev => ({ ...prev, status: newStatus }));
       // Reload details to get the newly appended TaskActivity log
-      fetchTaskDetails();
+      fetchTaskDetails({ silent: true });
     } catch (err) {
       console.error('Error updating status:', err);
       toast.error(err.response?.data?.message || 'Failed to update status');
@@ -176,6 +178,11 @@ export default function TaskDetails() {
               <p className="text-[13.5px] text-gray-600 leading-relaxed whitespace-pre-line">
                 {task.description || 'No description provided for this task.'}
               </p>
+            </div>
+
+            {/* Checklist Section */}
+            <div className="bg-white border border-gray-100 rounded-2xl p-5 sm:p-6 shadow-sm">
+              <SubtaskChecklist task={task} onChange={() => fetchTaskDetails({ silent: true })} />
             </div>
 
             {/* Attachments Section */}

@@ -147,6 +147,7 @@ model Task {
   comments       Comment[]
   attachments    Attachment[]
   taskActivities TaskActivity[]
+  subtasks       Subtask[]
 
   @@index([projectId])
   @@index([creatorId])
@@ -165,6 +166,22 @@ model TaskAssignment {
   @@unique([taskId, userId])
   @@index([userId])
   @@map("task_assignments")
+}
+
+// ─── SUBTASKS (CHECKLIST) ────────────────────────────
+model Subtask {
+  id          Int       @id @default(autoincrement())
+  title       String
+  isCompleted Boolean   @default(false)
+  completedAt DateTime?
+  position    Int       @default(0)
+  taskId      Int
+  task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([taskId])
+  @@map("subtasks")
 }
 
 // ─── COMMENTS ────────────────────────────────────────
