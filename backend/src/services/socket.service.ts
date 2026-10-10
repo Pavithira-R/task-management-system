@@ -198,8 +198,9 @@ export class SocketService {
   }
 
   /**
-   * Periodically checks for active tasks due in the next 24 hours
-   * and triggers DEADLINE_APPROACHING notifications for assigned users.
+   * Periodically checks deadlines of active tasks in live projects:
+   * - due in the next 24 hours → DEADLINE_APPROACHING for assigned users
+   * - past due → one "Overdue" alert per deadline for assignees and the task creator
    */
   private static startDeadlineCheck(): void {
     // Run checking routine every 1 hour in development
@@ -213,6 +214,7 @@ export class SocketService {
         const approachingTasks = await prisma.task.findMany({
           where: {
             status: { not: 'COMPLETED' },
+            project: { isDeleted: false },
             dueDate: {
               gt: now,
               lte: tomorrow,
@@ -241,6 +243,42 @@ export class SocketService {
               await this.sendNotification(assignment.userId, {
                 message: `Deadline approaching: task "${task.title}" is due soon (${task.dueDate?.toLocaleDateString()})`,
                 type: 'DEADLINE_APPROACHING',
+                taskId: task.id,
+              });
+            }
+          }
+        }
+
+        const overdueTasks = await prisma.task.findMany({
+          where: {
+            status: { not: 'COMPLETED' },
+            project: { isDeleted: false },
+            dueDate: { lt: now },
+          },
+          include: {
+            assignees: true,
+          },
+        });
+
+        for (const task of overdueTasks) {
+          const recipientIds = new Set<number>([task.creatorId, ...task.assignees.map((a) => a.userId)]);
+
+          for (const userId of recipientIds) {
+            // Alert once per deadline: an alert sent after the current due date means this one was already reported
+            const existingAlert = await prisma.notification.findFirst({
+              where: {
+                userId,
+                taskId: task.id,
+                type: NotificationType.DEADLINE_ALERT,
+                message: { startsWith: 'Overdue:' },
+                createdAt: { gt: task.dueDate! },
+              },
+            });
+
+            if (!existingAlert) {
+              await this.sendNotification(userId, {
+                message: `Overdue: task "${task.title}" was due ${task.dueDate!.toLocaleDateString()} and is not completed`,
+                type: 'DEADLINE_ALERT',
                 taskId: task.id,
               });
             }

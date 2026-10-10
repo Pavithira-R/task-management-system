@@ -10,6 +10,7 @@ A production-ready, secure, and feature-rich full-stack Task Management System d
 * **Role-Based Access Control (RBAC)**: Fine-grained permissions for `ADMIN`, `PROJECT_MANAGER`, and `COLLABORATOR` roles.
 * **Project Management**: Create projects, assign owners, and manage project members.
 * **Task Management**: Create, update, filter, prioritize, and assign tasks to collaborators.
+* **Deadline Reminders**: Assignees are notified when a task is due within 24 hours; assignees and the task creator are alerted once when it becomes overdue.
 * **Real-time Collaboration**: Project-wide instant messaging/chat and real-time live notifications powered by Socket.io.
 * **Task Checklists**: Break tasks into subtasks with a progress bar on the task page, task list and Kanban cards.
 * **Labels**: Color-coded, project-scoped labels on tasks, with a label filter on the task list.
