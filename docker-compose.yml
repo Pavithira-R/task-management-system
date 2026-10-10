@@ -12,6 +12,9 @@ services:
     environment:
       - PORT=5000
       - NODE_ENV=production
+    volumes:
+      # Persists locally stored attachments (used when S3 is not configured)
+      - uploads:/app/uploads
     restart: unless-stopped
     # If you add a database service to this file, uncomment the following:
     # depends_on:
@@ -27,3 +30,6 @@ services:
     restart: unless-stopped
     depends_on:
       - backend
+
+volumes:
+  uploads:

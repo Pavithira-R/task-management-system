@@ -41,8 +41,8 @@ COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/src ./src
 
-# Use unprivileged node user
-USER node
+# Writable directory for locally stored attachments (used when S3 is not configured)
+RUN mkdir -p /app/uploads && chown node:node /app/uploads
 
 # Use unprivileged node user
 USER node

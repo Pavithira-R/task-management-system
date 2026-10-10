@@ -12,8 +12,8 @@ export class S3Service {
    * @returns Resolves when the upload is complete
    */
   public static async uploadFile(fileBuffer: Buffer, mimeType: string, storageKey: string): Promise<void> {
-    if (!s3BucketName) {
-      throw new AppError('S3 bucket name is not configured', 500);
+    if (!s3Client || !s3BucketName) {
+      throw new AppError('S3 storage is not configured', 500);
     }
 
     const command = new PutObjectCommand({
@@ -37,8 +37,8 @@ export class S3Service {
    * @returns Resolves when the deletion is complete
    */
   public static async deleteFile(storageKey: string): Promise<void> {
-    if (!s3BucketName) {
-      throw new AppError('S3 bucket name is not configured', 500);
+    if (!s3Client || !s3BucketName) {
+      throw new AppError('S3 storage is not configured', 500);
     }
 
     const command = new DeleteObjectCommand({
@@ -62,8 +62,8 @@ export class S3Service {
    * @returns The pre-signed URL
    */
   public static async getSignedDownloadUrl(storageKey: string, originalFilename: string, expiresIn: number = 3600): Promise<string> {
-    if (!s3BucketName) {
-      throw new AppError('S3 bucket name is not configured', 500);
+    if (!s3Client || !s3BucketName) {
+      throw new AppError('S3 storage is not configured', 500);
     }
 
     const command = new GetObjectCommand({

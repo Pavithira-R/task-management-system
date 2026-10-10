@@ -1,6 +1,6 @@
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { AttachmentService } from '../services/attachment.service';
-import { S3Service } from '../services/s3.service';
+import { StorageService } from '../services/storage.service';
 import { AuthenticatedRequest } from '../middlewares/auth.middleware';
 import { AppError } from '../utils/AppError';
 import { Role } from '@prisma/client';
@@ -184,8 +184,12 @@ export class AttachmentController {
         return;
       }
 
-      // Generate Pre-signed URL for S3
-      const downloadUrl = await S3Service.getSignedDownloadUrl(attachment.storageKey, attachment.filename);
+      // Generate a time-limited download URL (S3 pre-signed or local signed link)
+      const downloadUrl = await StorageService.getDownloadUrl(
+        attachment.storageKey,
+        attachment.filename,
+        attachment.mimeType
+      );
 
       // Return URL to client or redirect
       res.status(200).json({
@@ -194,6 +198,25 @@ export class AttachmentController {
         data: {
           url: downloadUrl
         }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // GET /api/attachments/files/:token (local storage only; the signed token is the authorization)
+  public static async serveLocalFile(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (StorageService.driver !== 'local') {
+        throw new AppError('Not found', 404);
+      }
+
+      const { filePath, filename, mimeType } = StorageService.resolveDownloadToken(req.params.token);
+
+      res.setHeader('Content-Type', mimeType);
+      res.attachment(filename);
+      res.sendFile(filePath, (err) => {
+        if (err && !res.headersSent) next(err);
       });
     } catch (error) {
       next(error);

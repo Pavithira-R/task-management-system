@@ -2,7 +2,7 @@ import { prisma } from '../config/database';
 import { AppError } from '../utils/AppError';
 import { ActivityType, Role } from '@prisma/client';
 import { SocketService } from './socket.service';
-import { S3Service } from './s3.service';
+import { StorageService } from './storage.service';
 
 export class AttachmentService {
   // ─── CREATE ATTACHMENT RECORD ────────────────────────
@@ -63,8 +63,8 @@ export class AttachmentService {
       ? `tasks/task_${taskId}/${timestamp}-${safeFilename}`
       : `projects/project_${projectId}/${timestamp}-${safeFilename}`;
 
-    // Upload to S3
-    await S3Service.uploadFile(fileBuffer, mimeType, storageKey);
+    // Upload to S3 or local disk
+    await StorageService.uploadFile(fileBuffer, mimeType, storageKey);
 
     const attachment = await prisma.attachment.create({
       data: {
@@ -196,7 +196,7 @@ export class AttachmentService {
     }
 
     if (attachment.storageKey) {
-      await S3Service.deleteFile(attachment.storageKey);
+      await StorageService.deleteFile(attachment.storageKey);
     } else {
       // Backward compatibility for old disk files
       const fs = require('fs');

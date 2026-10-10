@@ -12,7 +12,7 @@ A production-ready, secure, and feature-rich full-stack Task Management System d
 * **Task Management**: Create, update, filter, prioritize, and assign tasks to collaborators.
 * **Real-time Collaboration**: Project-wide instant messaging/chat and real-time live notifications powered by Socket.io.
 * **Comments & Discussions**: Discuss task progress directly on tasks with support for comment editing/deletion.
-* **AWS S3 File Uploads**: Upload, rename, download, and delete task and project attachments securely.
+* **File Uploads (AWS S3 or local disk)**: Upload, rename, download, and delete task and project attachments securely. Uses S3 when configured, otherwise stores files locally with expiring signed download links.
 * **Administrative Audit Logs & Stats**: Access real-time system audit logs, user activation/deactivation controls, role delegation, and sign-up approval requests.
 * **Dynamic Reports**: Generate comprehensive status reports with PDF export capability.
 * **Docker Containerization**: Pre-configured multi-container Docker Compose setup with Nginx reverse proxy.
@@ -124,7 +124,9 @@ SMTP_USER=example@gmail.com
 SMTP_PASS="your_app_password"
 SMTP_FROM="TMS <example@gmail.com>"
 
-# AWS S3 configurations (for file uploads)
+# AWS S3 configurations (optional - for file uploads)
+# Leave these out to store attachments on local disk in backend/uploads
+# (override the folder with UPLOAD_DIR). Set all four to use S3 instead.
 AWS_REGION=ap-southeast-1
 AWS_S3_BUCKET=your-bucket-name
 AWS_ACCESS_KEY_ID=your_access_key

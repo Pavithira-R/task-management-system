@@ -10,3 +10,4 @@ yarn-error.log*
 coverage
 docker-compose.yml
 Dockerfile
+uploads

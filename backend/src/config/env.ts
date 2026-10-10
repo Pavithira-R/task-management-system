@@ -18,11 +18,14 @@ interface EnvConfig {
   JWT_SECRET: string;
   JWT_REFRESH_SECRET: string;
 
-  // AWS S3
-  AWS_REGION: string;
-  AWS_S3_BUCKET: string;
-  AWS_ACCESS_KEY_ID: string;
-  AWS_SECRET_ACCESS_KEY: string;
+  // AWS S3 (optional - local disk storage is used when not configured)
+  AWS_REGION?: string;
+  AWS_S3_BUCKET?: string;
+  AWS_ACCESS_KEY_ID?: string;
+  AWS_SECRET_ACCESS_KEY?: string;
+
+  // Local file storage directory (used when S3 is not configured)
+  UPLOAD_DIR: string;
 
   // SMTP (optional)
   SMTP_HOST?: string;
@@ -35,10 +38,6 @@ interface EnvConfig {
 const requiredEnv = [
   'DATABASE_URL',
   'JWT_SECRET',
-  'AWS_REGION',
-  'AWS_S3_BUCKET',
-  'AWS_ACCESS_KEY_ID',
-  'AWS_SECRET_ACCESS_KEY',
 ];
 
 for (const key of requiredEnv) {
@@ -64,11 +63,18 @@ export const config: EnvConfig = {
   JWT_REFRESH_SECRET:
     process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET!,
 
-  // AWS S3
-  AWS_REGION: process.env.AWS_REGION!,
-  AWS_S3_BUCKET: process.env.AWS_S3_BUCKET!,
-  AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID!,
-  AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY!,
+  // AWS S3 (optional)
+  AWS_REGION: process.env.AWS_REGION,
+  AWS_S3_BUCKET: process.env.AWS_S3_BUCKET,
+  AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+  AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+
+  // Local file storage
+  UPLOAD_DIR: path.resolve(
+    __dirname,
+    '../..',
+    process.env.UPLOAD_DIR || 'uploads'
+  ),
 
   // SMTP (optional)
   SMTP_HOST: process.env.SMTP_HOST,

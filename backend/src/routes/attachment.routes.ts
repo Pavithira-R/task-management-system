@@ -6,6 +6,9 @@ import { Role } from '@prisma/client';
 
 const router = Router();
 
+// Public: local-storage downloads are authorized by the signed, expiring token in the URL
+router.get('/files/:token', AttachmentController.serveLocalFile);
+
 router.use(authenticateUser as any);
 
 router.delete('/:id', checkRole([Role.ADMIN, Role.PROJECT_MANAGER, Role.COLLABORATOR]) as any, AttachmentController.deleteAttachment);
