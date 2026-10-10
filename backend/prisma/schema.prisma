@@ -108,6 +108,7 @@ model Project {
   members    ProjectMember[]
   messages   Message[]
   attachments Attachment[]
+  labels     Label[]
 
   @@index([ownerId])
   @@map("projects")
@@ -148,6 +149,7 @@ model Task {
   attachments    Attachment[]
   taskActivities TaskActivity[]
   subtasks       Subtask[]
+  labels         TaskLabel[]
 
   @@index([projectId])
   @@index([creatorId])
@@ -166,6 +168,33 @@ model TaskAssignment {
   @@unique([taskId, userId])
   @@index([userId])
   @@map("task_assignments")
+}
+
+// ─── LABELS (PROJECT-SCOPED TAGS) ────────────────────
+model Label {
+  id        Int         @id @default(autoincrement())
+  name      String
+  color     String      @default("#118B95")
+  projectId Int
+  project   Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  tasks TaskLabel[]
+
+  @@unique([projectId, name])
+  @@map("labels")
+}
+
+model TaskLabel {
+  taskId  Int
+  task    Task  @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  labelId Int
+  label   Label @relation(fields: [labelId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, labelId])
+  @@index([labelId])
+  @@map("task_labels")
 }
 
 // ─── SUBTASKS (CHECKLIST) ────────────────────────────

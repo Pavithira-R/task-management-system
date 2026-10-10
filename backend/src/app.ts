@@ -19,6 +19,7 @@ import logRoutes from './routes/log.routes';
 import messageRoutes from './routes/message.routes';
 import reportRoutes from './routes/report.routes';
 import subtaskRoutes from './routes/subtask.routes';
+import labelRoutes from './routes/label.routes';
 
 import { errorHandler } from './middlewares/error.middleware';
 import { notFoundHandler } from './middlewares/notFound.middleware';
@@ -54,6 +55,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/subtasks', subtaskRoutes);
+app.use('/api/labels', labelRoutes);
 app.use('/api/attachments', attachmentRoutes);
 app.use('/api/admin/users', userRoutes);
 app.use('/api/admin/requests', requestRoutes);

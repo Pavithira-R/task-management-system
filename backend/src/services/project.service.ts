@@ -419,6 +419,7 @@ export class ProjectService {
         assignees: { include: { user: { select: { id: true, name: true, email: true } } } },
         creator: { select: { id: true, name: true, email: true } },
         subtasks: { select: { id: true, isCompleted: true } },
+        labels: { include: { label: { select: { id: true, name: true, color: true } } } },
       },
       orderBy: { createdAt: 'desc' },
     });

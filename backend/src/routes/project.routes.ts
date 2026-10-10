@@ -3,6 +3,7 @@ import { ProjectController } from '../controllers/project.controller';
 import { authenticateUser } from '../middlewares/auth.middleware';
 import { checkRole } from '../middlewares/role.middleware';
 import { Role } from '@prisma/client';
+import { LabelController } from '../controllers/label.controller';
 
 const router = Router();
 
@@ -31,6 +32,10 @@ router.delete('/:id/members/:memberId', checkRole([Role.PROJECT_MANAGER]) as any
 
 // Get tasks belonging to project -> ADMIN, PROJECT_MANAGER, COLLABORATOR
 router.get('/:id/tasks', checkRole([Role.ADMIN, Role.PROJECT_MANAGER, Role.COLLABORATOR]) as any, ProjectController.getProjectTasks);
+
+// Project labels -> view: ADMIN, PROJECT_MANAGER, COLLABORATOR; create: PROJECT_MANAGER
+router.get('/:id/labels', checkRole([Role.ADMIN, Role.PROJECT_MANAGER, Role.COLLABORATOR]) as any, LabelController.getProjectLabels);
+router.post('/:id/labels', checkRole([Role.PROJECT_MANAGER]) as any, LabelController.createLabel);
 
 // Project Attachments
 import { AttachmentController } from '../controllers/attachment.controller';

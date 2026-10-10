@@ -12,6 +12,7 @@ A production-ready, secure, and feature-rich full-stack Task Management System d
 * **Task Management**: Create, update, filter, prioritize, and assign tasks to collaborators.
 * **Real-time Collaboration**: Project-wide instant messaging/chat and real-time live notifications powered by Socket.io.
 * **Task Checklists**: Break tasks into subtasks with a progress bar on the task page, task list and Kanban cards.
+* **Labels**: Color-coded, project-scoped labels on tasks, with a label filter on the task list.
 * **Comments & Discussions**: Discuss task progress directly on tasks with support for comment editing/deletion.
 * **File Uploads (AWS S3 or local disk)**: Upload, rename, download, and delete task and project attachments securely. Uses S3 when configured, otherwise stores files locally with expiring signed download links.
 * **Administrative Audit Logs & Stats**: Access real-time system audit logs, user activation/deactivation controls, role delegation, and sign-up approval requests.
@@ -246,6 +247,17 @@ Access the Swagger interactive API docs at `http://localhost:5000/api-docs` (whe
 | `POST` | `/api/tasks/:id/subtasks` | Add a checklist item | Project PM / Assigned Collaborator |
 | `PATCH` | `/api/subtasks/:id` | Rename or tick/untick a checklist item (`title`, `isCompleted`) | Project PM / Assigned Collaborator |
 | `DELETE` | `/api/subtasks/:id` | Delete a checklist item | Project PM / Assigned Collaborator |
+
+### 5c. Labels (`/api/projects/:id/labels`, `/api/labels` & `/api/tasks/:id/labels`)
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| `GET` | `/api/projects/:id/labels` | List a project's labels (with usage counts) | Project Members / Admin |
+| `POST` | `/api/projects/:id/labels` | Create a label (`name`, optional hex `color`) | Project PM |
+| `PATCH` | `/api/labels/:id` | Rename or recolor a label | Project PM |
+| `DELETE` | `/api/labels/:id` | Delete a label and remove it from all tasks | Project PM |
+| `PUT` | `/api/tasks/:id/labels` | Replace a task's labels (`labelIds: number[]`) | Project PM |
+
+`GET /api/tasks/filter` also accepts `labelId`.
 
 ### 6. File Attachments (`/api/tasks` & `/api/projects` & `/api/attachments`)
 | Method | Endpoint | Description | Access |

@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTasks } from '../../hooks/useTasks';
 import DeleteModal from '../../components/tasks/DeleteModal';
 import SubtaskProgress from '../../components/tasks/SubtaskProgress';
+import LabelChips from '../../components/tasks/LabelChips';
 import DashboardLayout from '../../components/DashboardLayout';
 import { format } from 'date-fns';
 
@@ -40,6 +41,7 @@ export default function TaskList() {
     searchQuery, setSearchQuery,
     statusFilter, setStatusFilter,
     priorityFilter, setPriorityFilter,
+    labelFilter, setLabelFilter, availableLabels,
     currentPage, setCurrentPage, totalPages,
     fetchTasks, updateTaskStatus, deleteTask,
   } = useTasks();
@@ -118,6 +120,18 @@ export default function TaskList() {
               <option value="MEDIUM">Medium</option>
               <option value="LOW">Low</option>
             </select>
+            {availableLabels.length > 0 && (
+              <select
+                value={labelFilter}
+                onChange={(e) => { setLabelFilter(e.target.value); setCurrentPage(1); }}
+                className="px-3 py-2 text-sm font-medium border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 focus:outline-none focus:border-[#118B95] shadow-sm cursor-pointer"
+              >
+                <option value="ALL">Label</option>
+                {availableLabels.map((label) => (
+                  <option key={label.key} value={label.key}>{label.name}</option>
+                ))}
+              </select>
+            )}
           </div>
         </div>
 
@@ -155,6 +169,7 @@ export default function TaskList() {
                           {task.description && (
                             <p className="text-xs text-gray-500 dark:text-slate-400 mt-1 truncate max-w-md">{task.description}</p>
                           )}
+                          <LabelChips labels={task.labels} className="mt-2" />
                           <SubtaskProgress subtasks={task.subtasks} className="mt-2 max-w-[220px]" />
                         </td>
                         <td className="px-6 py-4">

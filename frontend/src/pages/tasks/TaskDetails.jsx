@@ -6,6 +6,7 @@ import taskService from '../../services/taskService';
 import CommentSection from '../../components/comments/CommentSection';
 import AttachmentManager from '../../components/attachments/AttachmentManager';
 import SubtaskChecklist from '../../components/tasks/SubtaskChecklist';
+import TaskLabelPicker from '../../components/tasks/TaskLabelPicker';
 import { useToast } from '../../utils/ToastContext';
 
 export default function TaskDetails() {
@@ -234,6 +235,10 @@ export default function TaskDetails() {
                 <span className="text-indigo-950 font-bold text-[12.5px]">
                   {task.creator?.name || 'System'}
                 </span>
+              </div>
+
+              <div className="border-b border-gray-55/65 pb-3">
+                <TaskLabelPicker task={task} onChange={() => fetchTaskDetails({ silent: true })} />
               </div>
 
               {/* Assignees list */}

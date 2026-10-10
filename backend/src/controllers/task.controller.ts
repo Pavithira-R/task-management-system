@@ -267,7 +267,7 @@ export class TaskController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { status, priority, projectId } = req.query;
+      const { status, priority, projectId, labelId } = req.query;
 
       const tasks = await TaskService.filterTasks({
         userId: req.user!.id,
@@ -275,6 +275,7 @@ export class TaskController {
         status: status as string,
         priority: priority as string,
         projectId: projectId ? parseInt(projectId as string) : undefined,
+        labelId: labelId ? parseInt(labelId as string) : undefined,
       });
 
       res.status(200).json({

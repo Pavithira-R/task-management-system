@@ -3,6 +3,7 @@ import { TaskController } from '../controllers/task.controller';
 import { CommentController } from '../controllers/comment.controller';
 import { AttachmentController } from '../controllers/attachment.controller';
 import { SubtaskController } from '../controllers/subtask.controller';
+import { LabelController } from '../controllers/label.controller';
 import { uploadMiddleware } from '../middlewares/upload.middleware';
 import { authenticateUser } from '../middlewares/auth.middleware';
 import { checkRole } from '../middlewares/role.middleware';
@@ -51,6 +52,9 @@ router.get('/:id/comments', checkRole([Role.ADMIN, Role.PROJECT_MANAGER, Role.CO
 // ─── Task Checklist (Subtask) Routes ───────────────
 router.get('/:id/subtasks', checkRole([Role.ADMIN, Role.PROJECT_MANAGER, Role.COLLABORATOR]) as any, SubtaskController.getSubtasks);
 router.post('/:id/subtasks', checkRole([Role.PROJECT_MANAGER, Role.COLLABORATOR]) as any, SubtaskController.addSubtask);
+
+// ─── Task Label Routes ─────────────────────────────
+router.put('/:id/labels', checkRole([Role.PROJECT_MANAGER]) as any, LabelController.setTaskLabels);
 
 // ─── Task Attachment Routes ────────────────────────
 router.post('/:id/attachments', checkRole([Role.ADMIN, Role.PROJECT_MANAGER, Role.COLLABORATOR]) as any, uploadMiddleware.single('file'), AttachmentController.uploadAttachment);

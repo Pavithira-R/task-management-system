@@ -50,6 +50,7 @@ interface FilterTasksInput {
   status?: string;
   priority?: string;
   projectId?: number;
+  labelId?: number;
 }
 
 // ─── Valid Values ─────────────────────────────────────
@@ -84,6 +85,9 @@ export class TaskService {
         },
         subtasks: {
           select: { id: true, isCompleted: true },
+        },
+        labels: {
+          include: { label: { select: { id: true, name: true, color: true } } },
         },
       },
       orderBy: { createdAt: 'desc' },
@@ -329,6 +333,9 @@ export class TaskService {
         },
         subtasks: {
           orderBy: [{ position: 'asc' }, { id: 'asc' }],
+        },
+        labels: {
+          include: { label: { select: { id: true, name: true, color: true } } },
         },
       },
     });
@@ -749,7 +756,7 @@ export class TaskService {
 
   // ─── FILTER TASKS ───────────────────────────────────
   public static async filterTasks(input: FilterTasksInput) {
-    const { userId, userRole, status, priority, projectId } = input;
+    const { userId, userRole, status, priority, projectId, labelId } = input;
 
     // Validate filters if provided
     if (status && !VALID_STATUSES.includes(status)) {
@@ -764,6 +771,7 @@ export class TaskService {
         ...(status && { status: status as any }),
         ...(priority && { priority: priority as any }),
         ...(projectId && { projectId }),
+        ...(labelId && { labels: { some: { labelId } } }),
         // If not Admin, filter by user projects membership
         ...(userRole !== Role.ADMIN && {
           project: {
@@ -789,6 +797,9 @@ export class TaskService {
         },
         subtasks: {
           select: { id: true, isCompleted: true },
+        },
+        labels: {
+          include: { label: { select: { id: true, name: true, color: true } } },
         },
       },
       orderBy: { createdAt: 'desc' },

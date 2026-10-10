@@ -4,6 +4,7 @@ import DashboardLayout from '../../components/DashboardLayout';
 import taskService from '../../services/taskService';
 import projectService from '../../services/projectService';
 import SubtaskProgress from '../../components/tasks/SubtaskProgress';
+import LabelChips from '../../components/tasks/LabelChips';
 
 const COLUMNS = [
   { 
@@ -400,6 +401,9 @@ export default function KanbanBoard() {
                                 {task.description}
                               </p>
                             )}
+
+                            {/* Labels */}
+                            <LabelChips labels={task.labels} className="mb-2.5" />
 
                             {/* Checklist progress */}
                             <SubtaskProgress subtasks={task.subtasks} className="mb-3" />

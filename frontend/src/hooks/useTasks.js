@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import taskService from '../services/taskService';
 import { useToast } from '../utils/ToastContext';
+import { toLabelList } from '../utils/labels';
 
 export function useTasks() {
   const toast = useToast();
@@ -17,6 +18,7 @@ export function useTasks() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL'); // 'ALL' | 'TODO' | 'IN_PROGRESS' | 'COMPLETED'
   const [priorityFilter, setPriorityFilter] = useState('ALL');
+  const [labelFilter, setLabelFilter] = useState('ALL'); // 'ALL' | label name (case-insensitive)
   const [sortOrder, setSortOrder] = useState('newest'); // 'newest' | 'oldest'
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 9;
@@ -60,6 +62,11 @@ export function useTasks() {
       list = list.filter((t) => t.priority === priorityFilter);
     }
 
+    // Label filter (by name, so same-named labels across projects match together)
+    if (labelFilter !== 'ALL') {
+      list = list.filter((t) => toLabelList(t.labels).some((l) => l.name.toLowerCase() === labelFilter));
+    }
+
     // Sort
     list.sort((a, b) => {
       const da = new Date(a.createdAt);
@@ -68,7 +75,19 @@ export function useTasks() {
     });
 
     return list;
-  }, [tasks, searchQuery, statusFilter, priorityFilter, sortOrder]);
+  }, [tasks, searchQuery, statusFilter, priorityFilter, labelFilter, sortOrder]);
+
+  // Distinct label names across the loaded tasks, for the label filter
+  const availableLabels = useMemo(() => {
+    const byName = new Map();
+    tasks.forEach((t) =>
+      toLabelList(t.labels).forEach((l) => {
+        const key = l.name.toLowerCase();
+        if (!byName.has(key)) byName.set(key, { key, name: l.name });
+      })
+    );
+    return [...byName.values()].sort((a, b) => a.name.localeCompare(b.name));
+  }, [tasks]);
 
   // ── Pagination ────────────────────────────────────────────────────────────
   const totalPages = Math.ceil(filteredTasks.length / PAGE_SIZE);
@@ -148,6 +167,9 @@ export function useTasks() {
     setStatusFilter,
     priorityFilter,
     setPriorityFilter,
+    labelFilter,
+    setLabelFilter,
+    availableLabels,
     sortOrder,
     setSortOrder,
 
