@@ -2,6 +2,7 @@ import { prisma } from '../config/database';
 import { AppError } from '../utils/AppError';
 import { ActivityType, Role } from '@prisma/client';
 import { SocketService } from './socket.service';
+import { StorageService } from './storage.service';
 import fs from 'fs';
 
 
@@ -546,10 +547,16 @@ export class TaskService {
       throw new AppError('Only the project owner (Project Manager) can delete tasks', 403);
     }
 
-    // 3. Delete physical files from disk for task attachments
+    // 3. Delete stored files for task attachments (S3 / local storage, or legacy disk paths)
     const attachments = await prisma.attachment.findMany({ where: { taskId } });
     for (const attachment of attachments) {
-      if (fs.existsSync(attachment.fileUrl)) {
+      if (attachment.storageKey) {
+        try {
+          await StorageService.deleteFile(attachment.storageKey);
+        } catch (err) {
+          console.error('Failed to delete stored file during task cleanup:', err);
+        }
+      } else if (fs.existsSync(attachment.fileUrl)) {
         try {
           fs.unlinkSync(attachment.fileUrl);
         } catch (err) {
