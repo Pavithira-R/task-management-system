@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import NotificationPanel from './NotificationPanel';
+import GlobalSearch from './GlobalSearch';
 import api from '../services/api';
 import { useToast } from '../utils/ToastContext';
 import { subscribeToNotifications, getSocket } from '../services/socket';
@@ -324,16 +325,7 @@ export default function DashboardLayout({ children }) {
           </button>
           
           {/* Global Search */}
-          <div className="hidden md:flex items-center flex-1 max-w-md relative">
-            <svg className="w-4 h-4 text-gray-400 absolute left-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <input 
-              type="text" 
-              placeholder="Search tasks, projects, or people..." 
-              className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-lg text-sm dark:text-white dark:placeholder-slate-500 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-1 focus:ring-[#118B95] focus:border-[#118B95] transition-all"
-            />
-          </div>
+          <GlobalSearch />
 
           <div className="flex flex-1 justify-end items-center gap-4">
             
